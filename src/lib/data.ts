@@ -16,11 +16,25 @@ import {
   MoreHorizontal
 } from "lucide-react";
 
-// Import images from Figma assets
-import imgIntro1 from "figma:asset/f7855680c02e10fbca56885d3d58071e0cddedad.png";
-import imgIntro2 from "figma:asset/20f3221f11029b25fd0033389a4588687da49b77.png";
-import imgIntro3 from "figma:asset/2a11502a1532fa456124c21da85151959f25facb.png";
-import imgIntro4 from "figma:asset/7fecb953b563b642ac8b221ae1f0f19c4a5e4b89.png";
+// Import images from assets folder as raw base64 text
+// @ts-ignore
+import imgIntro1Raw from "../assets/f7855680c02e10fbca56885d3d58071e0cddedad.png?raw";
+// @ts-ignore
+import imgIntro2Raw from "../assets/20f3221f11029b25fd0033389a4588687da49b77.png?raw";
+// @ts-ignore
+import imgIntro3Raw from "../assets/2a11502a1532fa456124c21da85151959f25facb.png?raw";
+// @ts-ignore
+import imgIntro4Raw from "../assets/7fecb953b563b642ac8b221ae1f0f19c4a5e4b89.png?raw";
+
+
+// Helper to convert raw base64 to data URL
+const toDataURL = (base64: string, mimeType: string) => `data:${mimeType};base64,${base64}`;
+
+// Convert to proper data URLs (checking for JPEG vs PNG by first few chars)
+const imgIntro1 = toDataURL(imgIntro1Raw, imgIntro1Raw.startsWith('/9j/') ? 'image/jpeg' : 'image/png');
+const imgIntro2 = toDataURL(imgIntro2Raw, imgIntro2Raw.startsWith('/9j/') ? 'image/jpeg' : 'image/png');
+const imgIntro3 = toDataURL(imgIntro3Raw, imgIntro3Raw.startsWith('/9j/') ? 'image/jpeg' : 'image/png');
+const imgIntro4 = toDataURL(imgIntro4Raw, imgIntro4Raw.startsWith('/9j/') ? 'image/jpeg' : 'image/png');
 
 export type NavItem = {
   id: string;
