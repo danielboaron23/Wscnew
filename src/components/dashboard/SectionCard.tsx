@@ -92,7 +92,7 @@ export function SectionCard({ title, count, assets, viewMode, onAssetUpload, onA
         )}
 
         {/* Show More */}
-        <div className="flex justify-center pt-2">
+        <div className="flex justify-start pt-2">
           <button className="flex items-center gap-1 px-2 py-2 hover:bg-[#282828] rounded-lg transition-colors group">
             <Plus className="w-4 h-4 text-[#BABABA] group-hover:text-white" />
             <span className="text-[14px] font-bold text-[#BABABA] group-hover:text-white">Show more</span>
