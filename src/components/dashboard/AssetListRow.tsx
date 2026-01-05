@@ -8,7 +8,7 @@ interface AssetListRowProps {
   onClick?: () => void;
 }
 
-export function AssetListRow({ asset, onClick }: AssetListRowProps) {
+export const AssetListRow: React.FC<AssetListRowProps> = ({ asset, onClick }) => {
   const [isHovered, setIsHovered] = React.useState(false);
 
   return (
@@ -93,4 +93,4 @@ export function AssetListRow({ asset, onClick }: AssetListRowProps) {
       </div>
     </div>
   );
-}
+};

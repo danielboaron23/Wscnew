@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Plus } from 'lucide-react';
+import { Upload, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { AssetCard } from './AssetCard';
 import { AssetListRow } from './AssetListRow';
 import { Asset } from '../../lib/data';
@@ -18,13 +18,39 @@ interface SectionCardProps {
 export function SectionCard({ title, count, assets, viewMode, onAssetUpload, onAssetClick }: SectionCardProps) {
   const [filter, setFilter] = React.useState<'all' | 'essentials'>('all');
   const [isUploadOpen, setIsUploadOpen] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(() => {
+    const stored = sessionStorage.getItem(`section-collapsed-${title}`);
+    return stored === 'true';
+  });
+
+  const handleToggleCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    sessionStorage.setItem(`section-collapsed-${title}`, String(newState));
+  };
 
   return (
     <>
-      <div className="w-full bg-[#181818] border border-[#333333] rounded-lg p-6 flex flex-col gap-6 mb-6">
+      <div className={cn(
+        "w-full bg-[#181818] border border-[#333333] rounded-lg flex flex-col mb-6 transition-all duration-200 ease-out",
+        isCollapsed ? "p-4" : "p-6 gap-6"
+      )}>
         {/* Section Header */}
-        <div className="flex items-center justify-between border-b border-[#333333] pb-4">
+        <div className={cn(
+          "flex items-center justify-between",
+          !isCollapsed && "border-b border-[#333333] pb-4"
+        )}>
           <div className="flex items-center gap-2">
+            <button 
+              onClick={handleToggleCollapse}
+              className="p-1 hover:bg-[#282828] rounded-lg transition-colors"
+            >
+              {isCollapsed ? (
+                <ChevronDown className="w-5 h-5 text-[#BABABA]" />
+              ) : (
+                <ChevronUp className="w-5 h-5 text-[#BABABA]" />
+              )}
+            </button>
             <h2 className="text-[16px] font-semibold text-[#F0F0F0]">{title}</h2>
             <span className="text-[16px] font-semibold text-[#8E8E8E]">({count})</span>
           </div>
@@ -42,62 +68,67 @@ export function SectionCard({ title, count, assets, viewMode, onAssetUpload, onA
           </div>
         </div>
 
-        {/* Filter Tags */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setFilter('all')}
-            className={cn(
-              "px-4 h-7 rounded-full text-[12px] font-bold transition-colors",
-              filter === 'all' 
-                ? "bg-[#282828] text-[#E5FF00]" 
-                : "bg-[#282828] text-[#F0F0F0] font-normal hover:text-white"
-            )}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setFilter('essentials')}
-            className={cn(
-              "px-4 h-7 rounded-full text-[12px] font-bold transition-colors",
-              filter === 'essentials' 
-                ? "bg-[#282828] text-[#E5FF00]" 
-                : "bg-[#282828] text-[#F0F0F0] font-normal hover:text-white"
-            )}
-          >
-            Essentials
-          </button>
-        </div>
+        {/* Collapsible Content */}
+        {!isCollapsed && (
+          <>
+            {/* Filter Tags */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setFilter('all')}
+                className={cn(
+                  "px-4 h-7 rounded-full text-[12px] font-bold transition-colors",
+                  filter === 'all' 
+                    ? "bg-[#282828] text-[#E5FF00]" 
+                    : "bg-[#282828] text-[#F0F0F0] font-normal hover:text-white"
+                )}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setFilter('essentials')}
+                className={cn(
+                  "px-4 h-7 rounded-full text-[12px] font-bold transition-colors",
+                  filter === 'essentials' 
+                    ? "bg-[#282828] text-[#E5FF00]" 
+                    : "bg-[#282828] text-[#F0F0F0] font-normal hover:text-white"
+                )}
+              >
+                Essentials
+              </button>
+            </div>
 
-        {/* Grid or List View */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {assets.map((asset) => (
-              <AssetCard 
-                key={asset.id} 
-                asset={asset} 
-                onClick={() => onAssetClick?.(asset)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col w-full">
-             {assets.map((asset) => (
-               <AssetListRow 
-                 key={asset.id} 
-                 asset={asset} 
-                 onClick={() => onAssetClick?.(asset)} // Assuming AssetListRow also needs this
-               />
-             ))}
-          </div>
+            {/* Grid or List View */}
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {assets.map((asset) => (
+                  <AssetCard 
+                    key={asset.id}
+                    asset={asset}
+                    onClick={() => onAssetClick?.(asset)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col w-full">
+                 {assets.map((asset) => (
+                   <AssetListRow 
+                     key={asset.id} 
+                     asset={asset} 
+                     onClick={() => onAssetClick?.(asset)}
+                   />
+                 ))}
+              </div>
+            )}
+
+            {/* Show More */}
+            <div className="flex justify-center pt-2">
+              <button className="flex items-center gap-1 px-2 py-2 hover:bg-[#282828] rounded-lg transition-colors group">
+                <Plus className="w-4 h-4 text-[#BABABA] group-hover:text-white" />
+                <span className="text-[14px] font-bold text-[#BABABA] group-hover:text-white">Show more</span>
+              </button>
+            </div>
+          </>
         )}
-
-        {/* Show More */}
-        <div className="flex justify-start pt-2">
-          <button className="flex items-center gap-1 px-2 py-2 hover:bg-[#282828] rounded-lg transition-colors group">
-            <Plus className="w-4 h-4 text-[#BABABA] group-hover:text-white" />
-            <span className="text-[14px] font-bold text-[#BABABA] group-hover:text-white">Show more</span>
-          </button>
-        </div>
       </div>
 
       <UploadModal 

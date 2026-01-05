@@ -8,7 +8,7 @@ interface AssetCardProps {
   onClick?: () => void;
 }
 
-export function AssetCard({ asset, onClick }: AssetCardProps) {
+export const AssetCard: React.FC<AssetCardProps> = ({ asset, onClick }) => {
   const [isHovered, setIsHovered] = React.useState(false);
 
   return (
@@ -77,4 +77,4 @@ export function AssetCard({ asset, onClick }: AssetCardProps) {
       </div>
     </div>
   );
-}
+};
